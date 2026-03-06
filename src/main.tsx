@@ -3,33 +3,32 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import SignUp from './pages/SignUp.tsx'
+import ProtectedRoute from './components/ProtectedRoute.tsx'
+import Dashboard from './pages/Dashboard.tsx'
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
   },
-  // {
-  //   path: '/signUp',
-  //   element: <SignUp />
-  // },
+  {
+    path: '/sign-up',
+    element: <SignUp />
+  },
   // {
   //   path: '/forgot-password',
   //   element: <ForgotPassword />
   // },
-  // {
-  //   path: '/signInCustomer',
-  //   element: <SignInCustomer />
-  // },
-  // {
-  //   element: <ProtectedRoute />,
-  //   children: [
-  //     {
-  //       path: "/dashboard",
-  //       element: <Dashboard />,
-  //     },
-  //   ],
-  // },
+  {
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: "/dashboard",
+        element: <Dashboard />,
+      },
+    ],
+  },
   // {
   //   path: '*',
   //   element: <NotFound />
