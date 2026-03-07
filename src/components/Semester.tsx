@@ -10,19 +10,21 @@ interface User {
 }
 
 interface SemesterType {
-    id_semester: number;
+    id_semester: number | null;
     nama_semester: string;
-    academic_year: string;
-    nim_mahasiswa: string;
+}
+
+interface SemesterTypeComponent extends SemesterType {
     status_semester: string;
+    academic_year: string;
 }
 
 type SemesterProps = {
-    setActiveSemester: (semester: SemesterType | null) => void;
+    setActiveSemester: (semester: SemesterType) => void;
 }
 
 const Semester: React.FC<SemesterProps> = ({ setActiveSemester }) => {
-    const [semesters, setSemesters] = useState<SemesterType[]>([]);
+    const [semesters, setSemesters] = useState<SemesterTypeComponent[]>([]);
     const [showModal, setShowModal] = useState(false);
     const [semesterName, setSemesterName] = useState("");
     const [semesterStatus, setSemesterStatus] = useState("INACTIVE");
@@ -34,6 +36,7 @@ const Semester: React.FC<SemesterProps> = ({ setActiveSemester }) => {
 
     const navigate = useNavigate();
 
+    // CHECK TOKEN EXPIRATION
     useEffect(() => {
         const token = sessionStorage.getItem("token")
 
@@ -43,7 +46,9 @@ const Semester: React.FC<SemesterProps> = ({ setActiveSemester }) => {
             navigate("/")
         }
     }, [])
+    // 
 
+    // FETCH USER DATA
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
 
@@ -51,7 +56,9 @@ const Semester: React.FC<SemesterProps> = ({ setActiveSemester }) => {
             setUser(JSON.parse(storedUser));
         }
     }, []);
+    // 
 
+    // TIMEOUT FOR TOAST
     useEffect(() => {
         if (showToast.show && showToast.status === 'error' || showToast.status === 'success') {
             const timer = setTimeout(() => {
@@ -61,7 +68,9 @@ const Semester: React.FC<SemesterProps> = ({ setActiveSemester }) => {
             return () => clearTimeout(timer);
         }
     }, [showToast]);
+    // 
 
+    // FETCH DATA SEMESTER & ACTIVE SEMESTER
     useEffect(() => {
         const fetchDataSemester = async () => {
             if (!user?.nim_mahasiswa) return;
@@ -111,7 +120,7 @@ const Semester: React.FC<SemesterProps> = ({ setActiveSemester }) => {
                 if (data.semester) {
                     setActiveSemester(data.semester);
                 } else {
-                    setActiveSemester(null);
+                    setActiveSemester({ id_semester: null, nama_semester: "No active semester" });
                 }
             } catch (error) {
                 console.error("Error fetching active semester data:", error);
@@ -121,7 +130,9 @@ const Semester: React.FC<SemesterProps> = ({ setActiveSemester }) => {
         fetchDataActiveSemester();
         fetchDataSemester();
     }, [user, showModal, showConfirmDelete]);
+    // 
 
+    // OPEN ADD, EDIT MODAL
     const openAddModal = () => {
         setEditId(null)
         setSemesterName("")
@@ -130,14 +141,16 @@ const Semester: React.FC<SemesterProps> = ({ setActiveSemester }) => {
         setShowModal(true)
     }
 
-    const openEditModal = (semester: SemesterType) => {
+    const openEditModal = (semester: SemesterTypeComponent) => {
         setEditId(semester.id_semester)
         setSemesterName(semester.nama_semester)
         setSemesterStatus(semester.status_semester)
         setAcademicYear(semester.academic_year)
         setShowModal(true)
     }
+    // 
 
+    // HANDLE ADD, UPDATE, DELETE
     const handleUpdate = async () => {
         if (!editId) return;
 
@@ -232,6 +245,7 @@ const Semester: React.FC<SemesterProps> = ({ setActiveSemester }) => {
             setShowToast({ show: true, status: 'error', message: "Failed to delete semester." });
         }
     }
+    // 
 
     return (
         <div className="p-8">
@@ -243,7 +257,7 @@ const Semester: React.FC<SemesterProps> = ({ setActiveSemester }) => {
             </div>
 
             {/* Semester List */}
-            {semesters.length === 0 ? (
+            {semesters?.length === 0 ? (
                 <div className="bg-white rounded-xl shadow p-10 text-center">
                     <p className="text-gray-500">No semester data yet.</p>
                 </div>
@@ -254,7 +268,6 @@ const Semester: React.FC<SemesterProps> = ({ setActiveSemester }) => {
                             key={semester.id_semester}
                             className="group bg-white p-6 rounded-xl shadow hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100"
                         >
-
                             <div className="flex justify-between items-start">
                                 <div>
                                     <p className="text-lg font-semibold text-gray-800">
@@ -284,7 +297,7 @@ const Semester: React.FC<SemesterProps> = ({ setActiveSemester }) => {
                                     </button>
 
                                     <button
-                                        onClick={() => setShowConfirmDelete({ show: true, id: semester.id_semester })}
+                                        onClick={() => semester.id_semester && setShowConfirmDelete({ show: true, id: semester.id_semester })}
                                         className="cursor-pointer p-2 rounded-lg hover:bg-red-100 text-red-500"
                                     >
                                         <Trash2 size={18} />

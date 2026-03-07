@@ -8,14 +8,23 @@ interface User {
     email_mahasiswa: string;
 }
 
-const Home = () => {
+interface SemesterType {
+    id_semester: number | null;
+}
+
+type HomeProps = {
+    activeSemester: SemesterType;
+}
+
+const Home: React.FC<HomeProps> = ({ activeSemester }) => {
     const [user, setUser] = useState<User | null>(null);
     const [semester, setSemester] = useState<any[]>([]);
-    const [matakuliah, setMatakuliah] = useState(null);
+    const [matakuliah, setMatakuliah] = useState<any[]>([]);
     const [pertemuan, setPertemuan] = useState(null);
 
     const navigate = useNavigate();
 
+    // CHECK TOKEN EXPIRATION
     useEffect(() => {
         const token = sessionStorage.getItem("token")
 
@@ -27,7 +36,9 @@ const Home = () => {
 
         return
     }, [])
+    // 
 
+    // FETCH USER DATA
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
 
@@ -35,7 +46,9 @@ const Home = () => {
             setUser(JSON.parse(storedUser));
         }
     }, []);
+    // 
 
+    // FETCH DATA SEMESTER & MATAKULIAH
     useEffect(() => {
         const fetchDataSemester = async () => {
             if (!user?.nim_mahasiswa) return;
@@ -61,10 +74,39 @@ const Home = () => {
             }
         };
 
+        const fetchDataMatakuliah = async () => {
+            if (!user?.nim_mahasiswa) return;
+
+            try {
+                const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/getAllMatakuliahBySemester/${activeSemester?.id_semester}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${sessionStorage.getItem("token")}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch Matakuliah data");
+                }
+
+                const data = await response.json();
+
+                console.log(data)
+
+                setMatakuliah(data.matakuliah);
+            } catch (error) {
+                console.error("Error fetching matakuliah data:", error);
+            }
+        };
+
+        fetchDataMatakuliah();
         fetchDataSemester();
-    }, [user]);
+    }, [user, activeSemester]);
+    // 
 
     console.log(semester)
+    console.log(matakuliah)
 
     return (
         <div className="flex-1">
@@ -84,6 +126,11 @@ const Home = () => {
                     <div className="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
                         <p className="text-gray-500 text-sm">Total Semester</p>
                         <h3 className="text-3xl font-bold mt-2">{semester?.length}</h3>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
+                        <p className="text-gray-500 text-sm">Total Matakuliah</p>
+                        <h3 className="text-3xl font-bold mt-2">{matakuliah?.length}</h3>
                     </div>
 
                     <div className="bg-white p-6 rounded-xl shadow hover:shadow-md transition">

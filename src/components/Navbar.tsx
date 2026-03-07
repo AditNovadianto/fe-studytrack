@@ -7,12 +7,13 @@ interface User {
 }
 
 interface SemesterType {
+    id_semester: number | null;
     nama_semester: string;
 }
 
 type NavbarProps = {
     activeSemester: SemesterType;
-    setActiveSemester: (semester: SemesterType | null) => void;
+    setActiveSemester: (semester: SemesterType) => void;
 }
 
 const Navbar: React.FC<NavbarProps> = ({ activeSemester, setActiveSemester }) => {
@@ -48,7 +49,7 @@ const Navbar: React.FC<NavbarProps> = ({ activeSemester, setActiveSemester }) =>
                 if (data.semester) {
                     setActiveSemester(data.semester);
                 } else {
-                    setActiveSemester(null);
+                    setActiveSemester({ id_semester: null, nama_semester: "No active semester" });
                 }
             } catch (error) {
                 console.error("Error fetching active semester data:", error);

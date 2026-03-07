@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { LayoutDashboard, Layers, Library, Clock, StickyNote, Images } from "lucide-react";
+import { LayoutDashboard, Layers, Library, StickyNote, Images } from "lucide-react";
 import logo from "../images/logo.png";
 import Navbar from "../components/Navbar";
 import Home from "../components/Home";
 import Semester from "../components/Semester";
+import Matakuliah from "../components/Matakuliah";
 
 interface Semester {
+    id_semester: number | null;
     nama_semester: string;
 }
 
@@ -13,14 +15,13 @@ const menu = [
     { name: "Home", icon: <LayoutDashboard size={22} /> },
     { name: "Semester", icon: <Layers size={22} /> },
     { name: "Matakuliah", icon: <Library size={22} /> },
-    { name: "Pertemuan", icon: <Clock size={22} /> },
     { name: "Catatan", icon: <StickyNote size={22} /> },
     { name: "Photos", icon: <Images size={22} /> },
 ];
 
 const Dashboard = () => {
     const [section, setSection] = useState('Home')
-    const [activeSemester, setActiveSemester] = useState<Semester | null>(null);
+    const [activeSemester, setActiveSemester] = useState<Semester>({ id_semester: null, nama_semester: "No active semester" });
 
     return (
         <div className="flex min-h-screen bg-gray-100">
@@ -67,10 +68,11 @@ const Dashboard = () => {
             </div>
 
             <div className="w-full">
-                <Navbar activeSemester={activeSemester || { nama_semester: "No active semester" }} setActiveSemester={setActiveSemester} />
+                <Navbar activeSemester={activeSemester} setActiveSemester={setActiveSemester} />
 
-                {section === "Home" && <Home />}
+                {section === "Home" && <Home activeSemester={activeSemester} />}
                 {section === "Semester" && <Semester setActiveSemester={setActiveSemester} />}
+                {section === "Matakuliah" && <Matakuliah />}
             </div>
         </div>
     );
