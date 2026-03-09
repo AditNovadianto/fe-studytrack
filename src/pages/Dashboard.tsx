@@ -5,6 +5,7 @@ import Navbar from "../components/Navbar";
 import Home from "../components/Home";
 import Semester from "../components/Semester";
 import Matakuliah from "../components/Matakuliah";
+import Catatan from "../components/Catatan";
 
 interface Semester {
     id_semester: number | null;
@@ -73,6 +74,7 @@ const Dashboard = () => {
                 {section === "Home" && <Home activeSemester={activeSemester} />}
                 {section === "Semester" && <Semester setActiveSemester={setActiveSemester} />}
                 {section === "Matakuliah" && <Matakuliah />}
+                {section === "Catatan" && <Catatan />}
             </div>
         </div>
     );

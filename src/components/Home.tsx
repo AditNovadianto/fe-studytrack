@@ -20,7 +20,6 @@ const Home: React.FC<HomeProps> = ({ activeSemester }) => {
     const [user, setUser] = useState<User | null>(null);
     const [semester, setSemester] = useState<any[]>([]);
     const [matakuliah, setMatakuliah] = useState<any[]>([]);
-    const [pertemuan, setPertemuan] = useState(null);
 
     const navigate = useNavigate();
 
@@ -123,27 +122,27 @@ const Home: React.FC<HomeProps> = ({ activeSemester }) => {
 
                 {/* Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
+                    <div className="bg-white p-6 rounded-xl shadow hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100">
                         <p className="text-gray-500 text-sm">Total Semester</p>
                         <h3 className="text-3xl font-bold mt-2">{semester?.length}</h3>
                     </div>
 
-                    <div className="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
+                    <div className="bg-white p-6 rounded-xl shadow hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100">
                         <p className="text-gray-500 text-sm">Total Matakuliah</p>
                         <h3 className="text-3xl font-bold mt-2">{matakuliah?.length}</h3>
                     </div>
 
-                    <div className="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
+                    <div className="bg-white p-6 rounded-xl shadow hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100">
                         <p className="text-gray-500 text-sm">Total Tasks</p>
                         <h3 className="text-3xl font-bold mt-2">12</h3>
                     </div>
 
-                    <div className="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
+                    <div className="bg-white p-6 rounded-xl shadow hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100">
                         <p className="text-gray-500 text-sm">Completed Tasks</p>
                         <h3 className="text-3xl font-bold mt-2 text-green-500">8</h3>
                     </div>
 
-                    <div className="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
+                    <div className="bg-white p-6 rounded-xl shadow hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100">
                         <p className="text-gray-500 text-sm">Pending Tasks</p>
                         <h3 className="text-3xl font-bold mt-2 text-red-500">4</h3>
                     </div>

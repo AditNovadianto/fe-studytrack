@@ -260,6 +260,17 @@ const Semester: React.FC<SemesterProps> = ({ setActiveSemester }) => {
             {semesters?.length === 0 ? (
                 <div className="bg-white rounded-xl shadow p-10 text-center">
                     <p className="text-gray-500">No semester data yet.</p>
+
+                    <div
+                        onClick={openAddModal}
+                        className="mt-5 flex flex-col items-center justify-center cursor-pointer bg-white rounded-xl border-2 border-dashed border-gray-300 hover:border-blue-400 hover:bg-blue-50 transition-all p-8"
+                    >
+                        <Plus size={30} className="text-blue-500 mb-2" />
+
+                        <p className="text-gray-600 font-medium">
+                            Add New Semester
+                        </p>
+                    </div>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
