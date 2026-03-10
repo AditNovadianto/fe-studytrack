@@ -68,13 +68,15 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            <div className="w-full">
+            <div className="w-full h-screen flex flex-col overflow-hidden">
                 <Navbar activeSemester={activeSemester} setActiveSemester={setActiveSemester} />
 
-                {section === "Home" && <Home activeSemester={activeSemester} />}
-                {section === "Semester" && <Semester setActiveSemester={setActiveSemester} />}
-                {section === "Matakuliah" && <Matakuliah />}
-                {section === "Catatan" && <Catatan />}
+                <div className="flex-1 overflow-y-auto">
+                    {section === "Home" && <Home activeSemester={activeSemester} />}
+                    {section === "Semester" && <Semester setActiveSemester={setActiveSemester} />}
+                    {section === "Matakuliah" && <Matakuliah />}
+                    {section === "Catatan" && <Catatan />}
+                </div>
             </div>
         </div>
     );

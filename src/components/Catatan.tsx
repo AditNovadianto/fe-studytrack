@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { isTokenExpired } from "../utils/auth";
 import { useNavigate } from "react-router-dom";
+import NoteEditor from "./NoteEditor";
 
 interface User {
     nim_mahasiswa: string;
@@ -63,6 +64,8 @@ const Catatan = () => {
             localStorage.removeItem("user");
             navigate("/");
         }
+
+        return;
     }, []);
     // 
 
@@ -104,6 +107,13 @@ const Catatan = () => {
                     }
                 );
 
+                if (response.status === 401) {
+                    sessionStorage.removeItem("token")
+                    localStorage.removeItem("user")
+                    navigate("/")
+                    return
+                }
+
                 const data = await response.json();
 
                 if (data.semester) {
@@ -135,6 +145,13 @@ const Catatan = () => {
                     }
                 );
 
+                if (response.status === 401) {
+                    sessionStorage.removeItem("token")
+                    localStorage.removeItem("user")
+                    navigate("/")
+                    return
+                }
+
                 const data = await response.json();
 
                 setMatakuliah(data.matakuliah);
@@ -163,6 +180,13 @@ const Catatan = () => {
                         }
                     }
                 )
+
+                if (response.status === 401) {
+                    sessionStorage.removeItem("token")
+                    localStorage.removeItem("user")
+                    navigate("/")
+                    return
+                }
 
                 const data = await response.json()
 
@@ -193,13 +217,20 @@ const Catatan = () => {
                 }
             )
 
+            if (response.status === 401) {
+                sessionStorage.removeItem("token")
+                localStorage.removeItem("user")
+                navigate("/")
+                return
+            }
+
             const data = await response.json()
 
             setCatatan(data)
         }
 
         fetchCatatan()
-    }, [selectedPertemuan, showModal])
+    }, [selectedPertemuan, showModal, showToast.show])
     // 
 
     // HANDLE CREATE, EDIT, DELETE CATATAN
@@ -352,10 +383,10 @@ const Catatan = () => {
                     {/* LIST CATATAN */}
                     {selectedMatakuliah && selectedPertemuan && (
                         <div>
-                            <div className="flex items-center gap-5 justify-between w-full">
+                            <div className="sticky top-5 bg-black/20 backdrop-blur-md p-2 rounded-lg flex items-center gap-5 justify-between w-full">
                                 <button
                                     onClick={() => setSelectedPertemuan(null)}
-                                    className="cursor-pointer mb-4 text-blue-500 hover:underline"
+                                    className="cursor-pointer text-blue-500 hover:underline"
                                 >
                                     ← Kembali
                                 </button>
@@ -365,13 +396,13 @@ const Catatan = () => {
                                         setShowModal(true)
                                         setIsEditing(false)
                                     }}
-                                    className="mb-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                                    className="cursor-pointer px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
                                 >
                                     + Tambah Catatan
                                 </button>
                             </div>
 
-                            <h1 className="text-xl font-semibold mb-6">
+                            <h1 className="text-xl font-semibold mb-6 mt-4">
                                 {selectedPertemuan.nama_pertemuan}
                             </h1>
 
@@ -386,13 +417,11 @@ const Catatan = () => {
                                         className="p-5 bg-white border rounded-xl shadow-sm hover:shadow-md transition"
                                     >
                                         <div className="flex justify-between items-start mb-2">
-
                                             <h2 className="text-lg font-semibold text-gray-800">
                                                 {c.title}
                                             </h2>
 
                                             <div className="flex gap-2">
-
                                                 <button
                                                     onClick={() => {
                                                         setIsEditing(true)
@@ -404,26 +433,33 @@ const Catatan = () => {
                                                             content: c.content
                                                         })
                                                     }}
-                                                    className="text-yellow-500 hover:text-yellow-600"
+                                                    className="cursor-pointer text-yellow-500 hover:text-yellow-600"
                                                 >
                                                     Edit
                                                 </button>
 
                                                 <button
                                                     onClick={() => setShowConfirmDelete({ show: true, id: c._id })}
-                                                    className="text-red-500 hover:text-red-600"
+                                                    className="cursor-pointer text-red-500 hover:text-red-600"
                                                 >
                                                     Delete
                                                 </button>
                                             </div>
                                         </div>
 
-                                        <p className="text-gray-600 mb-3">
-                                            {c.content}
-                                        </p>
+                                        <div
+                                            className="prose max-w-none"
+                                            dangerouslySetInnerHTML={{ __html: c.content }}
+                                        />
 
-                                        <div className="text-xs text-gray-400">
-                                            {new Date(c.createdAt).toLocaleDateString("id-ID")}
+                                        <div className="flex items-center w-full justify-between">
+                                            <div className="text-xs text-gray-400">
+                                                Created {new Date(c.createdAt).toLocaleDateString("id-ID")}
+                                            </div>
+
+                                            <div className="text-xs text-gray-400">
+                                                Updated {new Date(c.updatedAt).toLocaleDateString("id-ID")}
+                                            </div>
                                         </div>
                                     </div>
                                 ))}
@@ -435,7 +471,7 @@ const Catatan = () => {
 
             {showModal && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black/40">
-                    <div className="bg-white p-6 rounded-xl w-100 space-y-4">
+                    <div className="bg-white p-6 rounded-xl w-[50%] space-y-4">
                         <h2 className="text-lg font-semibold">
                             {isEditing ? "Edit Catatan" : "Tambah Catatan"}
                         </h2>
@@ -450,34 +486,29 @@ const Catatan = () => {
                             className="w-full border rounded-lg p-2"
                         />
 
-                        <textarea
-                            placeholder="Isi catatan..."
-                            value={formData.content}
-                            onChange={(e) =>
-                                setFormData({ ...formData, content: e.target.value })
+                        <NoteEditor
+                            content={formData.content}
+                            onChange={(value) =>
+                                setFormData({ ...formData, content: value })
                             }
-                            className="w-full border rounded-lg p-2 h-28"
                         />
 
                         <div className="flex justify-end gap-2">
                             <button
                                 onClick={() => { setShowModal(false); setIsEditing(false); setFormData({ title: "", content: "" }) }}
-                                className="px-3 py-2 border rounded-lg"
+                                className="cursor-pointer px-3 py-2 border rounded-lg"
                             >
                                 Cancel
                             </button>
 
                             <button
                                 onClick={isEditing ? handleEditNote : handleCreateNote}
-                                className="px-4 py-2 bg-blue-500 text-white rounded-lg"
+                                className="cursor-pointer px-4 py-2 bg-blue-500 text-white rounded-lg"
                             >
                                 Save
                             </button>
-
                         </div>
-
                     </div>
-
                 </div>
             )}
 

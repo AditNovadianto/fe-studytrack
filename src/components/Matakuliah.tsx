@@ -45,6 +45,8 @@ const Matakuliah = () => {
             localStorage.removeItem("user");
             navigate("/");
         }
+
+        return;
     }, []);
     // 
 

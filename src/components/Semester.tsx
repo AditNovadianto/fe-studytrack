@@ -45,6 +45,8 @@ const Semester: React.FC<SemesterProps> = ({ setActiveSemester }) => {
             localStorage.removeItem("user")
             navigate("/")
         }
+
+        return;
     }, [])
     // 
 

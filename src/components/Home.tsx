@@ -33,7 +33,7 @@ const Home: React.FC<HomeProps> = ({ activeSemester }) => {
             navigate("/")
         }
 
-        return
+        return;
     }, [])
     // 
 
