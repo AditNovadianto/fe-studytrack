@@ -200,8 +200,9 @@ const Catatan = () => {
 
         fetchPertemuan()
     }, [selectedMatakuliah])
+    // 
 
-    // FETCH CATATAN
+    // FETCH LIST CATATAN
     useEffect(() => {
         if (!selectedMatakuliah || !selectedPertemuan) return
 
@@ -470,8 +471,8 @@ const Catatan = () => {
             )}
 
             {showModal && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black/40">
-                    <div className="bg-white p-6 rounded-xl w-[50%] space-y-4">
+                <div className="fixed inset-0 flex p-5 justify-center bg-black/40">
+                    <div className="bg-white overflow-y-auto overflow-hidden p-6 rounded-xl w-[50%] space-y-4">
                         <h2 className="text-lg font-semibold">
                             {isEditing ? "Edit Catatan" : "Tambah Catatan"}
                         </h2>
